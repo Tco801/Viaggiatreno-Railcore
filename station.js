@@ -1,80 +1,291 @@
 import {
     getStations,
-    getTrains
+    getTrains,
+    getJourney
 }
 from "./api.js";
 
 const params =
-    new URLSearchParams(window.location.search);
+    new URLSearchParams(
+        window.location.search
+    );
 
 const stationName =
     params.get("name");
+
+const board =
+    document.getElementById(
+        "board"
+    );
 
 document.getElementById(
     "stationTitle"
 ).textContent = stationName;
 
-async function loadBoard() {
 
-    const stations =
-        await getStations();
+function formatStatus(status) {
 
-    const trains =
-        await getTrains();
+    switch(status) {
 
-    const relatedPlatforms =
-        stations.filter(
-            station =>
-                station.station.tag_name === stationName
+        case "EN_ROUTE":
+            return "🚄 In corsa";
+
+        case "WAITING_FOR_SIGNAL":
+            return "🚦 Attesa";
+
+        case "AT_STATION":
+            return "🚉 In stazione";
+
+        default:
+            return status;
+    }
+}
+
+
+function ticksToMcTime(ticks) {
+
+    const totalMinutes =
+        Math.floor(
+            ticks / 20
         );
 
-    const board =
-        document.getElementById("board");
+    const hours =
+        Math.floor(
+            totalMinutes / 60
+        );
 
-    board.innerHTML = "";
+    const minutes =
+        totalMinutes % 60;
 
-    relatedPlatforms.forEach(platform => {
+    return `${String(hours)
+        .padStart(2,"0")}:${String(minutes)
+        .padStart(2,"0")}`;
+}
 
-        platform.train_ids.forEach(trainId => {
 
-            const train =
-                trains.find(
-                    t =>
-                        t.train_id === trainId
-                );
+async function loadBoard() {
 
-            if (!train) return;
+    try {
 
-            const category =
-                platform.categories[0]?.name || "-";
+        const stations =
+            await getStations();
 
-            const track =
-                platform.station.info.platform || "-";
+        const trains =
+            await getTrains();
 
-            board.innerHTML += `
+        const rows = [];
+
+        const platforms =
+            stations.filter(
+                station =>
+                    station.station.tag_name ===
+                    stationName
+            );
+
+        for(const platform of platforms) {
+
+            for(const trainId of platform.train_ids) {
+
+                const train =
+                    trains.find(
+                        t =>
+                            t.train_id ===
+                            trainId
+                    );
+
+                if(!train)
+                    continue;
+
+                try {
+
+                    const journey =
+                        await getJourney(
+                            trainId
+                        );
+
+                    const currentStop =
+                        journey.stops.find(
+                            stop =>
+                                stop.station.tag_name ===
+                                stationName
+                        );
+
+                    if(!currentStop)
+                        continue;
+
+                    rows.push({
+
+   			 trainId,
+
+  			  trainName:
+   			     train.train_name,
+
+  			  category:
+  			      train.category.name,
+
+ 			   categoryColor:
+  			      parseColor(
+  			          train.category.color
+   			     ),
+
+ 			   destination:
+      			  train.destination.tag_name,
+
+   			 platform:
+   			     platform.station.info.platform,
+
+  			  status:
+  			      train.live_state,
+		
+  			  arrival:
+       			 currentStop.scheduled.arrival
+
+			});
+
+                }
+
+                catch(error) {
+
+                    console.error(
+                        error
+                    );
+
+                }
+
+            }
+
+        }
+
+        rows.sort(
+            (a,b) =>
+                a.arrival -
+                b.arrival
+        );
+
+        board.innerHTML = "";
+
+        rows.forEach(
+            row => {
+
+                board.innerHTML += `
+
                 <tr>
 
                     <td>
-                        <a href="train.html?id=${trainId}">
-                            ${train.train_name}
+
+                        ${
+                            ticksToMcTime(
+                                row.arrival
+                            )
+                        }
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="
+                            train.html?id=${row.trainId}
+                            "
+                        >
+
+                            ${row.trainName}
+
                         </a>
+
                     </td>
 
                     <td>
-                        ${category}
+
+                        <span
+                            class="category-pill"
+                            style="
+                                background:
+                                ${row.categoryColor};
+                            "
+                        >
+
+                            ${row.category}
+
+                        </span>
+
                     </td>
 
                     <td>
-                        ${track}
+
+                        ${row.destination}
+
+                    </td>
+
+                    <td>
+
+                        ${row.platform}
+
+                    </td>
+
+                    <td>
+
+                        ${
+                            formatStatus(
+                                row.status
+                            )
+                        }
+
                     </td>
 
                 </tr>
-            `;
-        });
 
-    });
+                `;
+            }
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        board.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="6"
+                style="
+                    color:red;
+                    font-weight:bold;
+                    text-align:center;
+                "
+            >
+
+                SERVER OFFLINE
+
+            </td>
+
+        </tr>
+
+        `;
+    }
+}
+
+function parseColor(color) {
+
+    if (!color) {
+        return "#173252";
+    }
+
+    if (color.length === 9) {
+
+        return "#" + color.substring(3);
+
+    }
+
+    return color;
 }
 
 loadBoard();
 
-setInterval(loadBoard, 5000);
+setInterval(
+    loadBoard,
+    5000
+);
