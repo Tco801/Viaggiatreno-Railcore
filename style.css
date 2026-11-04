@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f5f7;
+}
+
+header {
+    background: #0066cc;
+    color: white;
+    padding: 20px;
+}
+
+main {
+    padding: 20px;
+}
+
+.station-card {
+
+    display: block;
+
+    background: white;
+
+    padding: 15px;
+
+    margin-bottom: 10px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    color: black;
+
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.station-card:hover {
+
+    background: #f0f0f0;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: white;
+}
+
+th {
+
+    background: #0066cc;
+
+    color: white;
+}
+
+th,
+td {
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+}
+
+a {
+
+    color: #0066cc;
+
+    text-decoration: none;
+}
+
+a:hover {
+
+    text-decoration: underline;
+}
