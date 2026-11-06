@@ -1,262 +1,191 @@
 import {
     getTrain,
-    getJourney
+    getJourney,
+    getCategoryInfo,
+    getTime
+} from "./api.js";
+
+const params = new URLSearchParams(window.location.search);
+const trainId = params.get("id");
+
+const trainName = document.getElementById("trainName");
+const trainInfo = document.getElementById("trainInfo");
+const stopsTable = document.getElementById("stops");
+const mcTimeSpan = document.getElementById("mcTime");
+const serverStatus = document.getElementById("serverStatus");
+
+function minecraftTimeToClock(time) {
+    if (time === undefined || time === null) return "--:--";
+    const totalMinutes = Math.floor(time * 0.06);
+    let hours = Math.floor(totalMinutes / 60) + 6;
+    const minutes = totalMinutes % 60;
+    hours = hours % 24;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
-from "./api.js";
 
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
+function translateLiveState(state) {
+    if (!state) return "-";
+    const stateClean = String(state).toLowerCase().trim();
 
-const trainId =
-    params.get("id");
+    switch (stateClean) {
+        case "en_route":
+        case "running":
+        case "moving":
+        case "in_transit":
+            return `<span class="status-running">In corsa</span>`;
+        case "station":
+        case "stopped":
+        case "at_station":
+        case "in_station":
+            return `<span class="status-station">In stazione</span>`;
+        case "waiting":
+        case "idle":
+        case "delayed":
+            return `<span class="status-waiting">In attesa</span>`;
+        case "ended":
+        case "terminated":
+        case "completed":
+            return `<span>Terminato</span>`;
+        default:
+            return stateClean.replace(/_/g, " ");
+    }
+}
 
-const trainName =
-    document.getElementById(
-        "trainName"
-    );
+async function updateClock() {
+    try {
+        const timeData = await getTime();
+        if (timeData && timeData.time !== undefined && mcTimeSpan) {
+            mcTimeSpan.textContent = `🕒 Ora Minecraft: ${minecraftTimeToClock(timeData.time)}`;
+        }
+    } catch (err) {
+        console.error("Errore recupero ora:", err);
+    }
+}
 
-const trainInfo =
-    document.getElementById(
-        "trainInfo"
-    );
-
-const stopsTable =
-    document.getElementById(
-        "stops"
-    );
-
-function ticksToMcTime(ticks) {
-
-    const minutes =
-        Math.floor(
-            ticks / 20
-        );
-
-    const hours =
-        Math.floor(
-            minutes / 60
-        );
-
-    const mins =
-        minutes % 60;
-
-    return `${String(hours)
-        .padStart(2,"0")}:${
-        String(mins)
-        .padStart(2,"0")
-    }`;
+function getStationTagName(stationObj) {
+    if (!stationObj) return null;
+    if (typeof stationObj === "string") return stationObj;
+    return stationObj.tag_name || stationObj.name || stationObj.station?.tag_name || stationObj.station?.name || null;
 }
 
 async function loadTrain() {
+    if (!trainId) {
+        trainName.innerHTML = "⚠️ Nessun treno specificato nell'URL";
+        return;
+    }
 
     try {
+        const [train, journey] = await Promise.all([
+            getTrain(trainId),
+            getJourney(trainId)
+        ]);
 
-        const train =
-            await getTrain(
-                trainId
-            );
+        if (serverStatus) {
+            serverStatus.innerHTML = `<span class="status-online">✅ SERVER ONLINE</span>`;
+        }
 
-        const journey =
-            await getJourney(
-                trainId
-            );
+        const tName = train.train_name || train.name || train.id || "Treno";
+        const catKey = train.category?.code || train.category?.name || train.category;
+        const categoryInfo = await getCategoryInfo(catKey);
+
+        let categoryLogoHtml = "";
+        if (categoryInfo && categoryInfo.logo) {
+            categoryLogoHtml = `
+                <div class="operator-info">
+                    <img src="./${categoryInfo.logo}" class="operator-logo-large" alt="${categoryInfo.name || 'Categoria'}">
+                </div>
+            `;
+        }
 
         trainName.innerHTML = `
-
-            <span class="train-header">
-
-            ${train.train_name}
-
-            </span>
-
+            ${categoryLogoHtml}
+            <span class="train-header">${tName}</span>
         `;
 
+        const destName = getStationTagName(train.destination) || "-";
+        const currStationName = getStationTagName(train.current_station) || "-";
+        const nextStationName = getStationTagName(train.next_station) || "-";
+
+        const distance = train.position?.distance_to_next_stop !== undefined 
+            ? `${Math.round(train.position.distance_to_next_stop)} m` 
+            : "-";
+
         trainInfo.innerHTML = `
-
             <div class="info-box">
-
-                <h4>Categoria</h4>
-
-                <br>
-
-                <div
-                    class="category-box"
-                    style="
-                        background:
-                        ${parseColor(
-     		    	   train.category.color
- 		       )};
-
-                    "
-                >
-
-                    ${train.category.name}
-
-                </div>
-
-            </div>
-
-            <div class="info-box">
-
                 <h4>Destinazione</h4>
-
                 <br>
-
-                ${train.destination.tag_name}
-
+                <strong>${destName}</strong>
             </div>
 
             <div class="info-box">
-
                 <h4>Stazione attuale</h4>
-
                 <br>
-
-                ${train.current_station.tag_name}
-
+                <strong>${currStationName}</strong>
             </div>
 
             <div class="info-box">
-
                 <h4>Prossima fermata</h4>
-
                 <br>
-
-                ${train.next_station.tag_name}
-
+                <strong>${nextStationName}</strong>
             </div>
 
             <div class="info-box">
-
                 <h4>Distanza</h4>
-
                 <br>
-
-                ${Math.round(
-                    train.position
-                    .distance_to_next_stop
-                )} m
-
+                <strong>${distance}</strong>
             </div>
 
             <div class="info-box">
-
                 <h4>Stato</h4>
-
                 <br>
-
-                ${train.live_state}
-
+                ${translateLiveState(train.live_state)}
             </div>
-
         `;
 
         stopsTable.innerHTML = "";
 
-        journey.stops.forEach(
-            (stop,index) => {
+        const stops = Array.isArray(journey) ? journey : (journey.stops || []);
+        const currentStopIndex = journey.current_stop_index ?? -1;
 
-                let rowClass =
-                    "future-stop";
+        stops.forEach((stop, index) => {
+            let rowClass = "future-stop";
 
-                if(
-                    index <
-                    journey.current_stop_index
-                ) {
-
-                    rowClass =
-                    "completed-stop";
-                }
-
-                if(
-                    index ===
-                    journey.current_stop_index
-                ) {
-
-                    rowClass =
-                    "current-train";
-                }
-
-                stopsTable.innerHTML += `
-
-                <tr
-                    class="${rowClass}"
-                >
-
-                    <td>
-                        ${
-                            stop.station
-                            .tag_name
-                        }
-                    </td>
-
-                    <td>
-                        ${
-                            stop.station
-                            .info
-                            ?.platform || "-"
-                        }
-                    </td>
-
-                    <td>
-
-                        ${
-                            ticksToMcTime(
-                                stop.scheduled
-                                .arrival
-                            )
-                        }
-
-                    </td>
-
-                    <td>
-
-                        ${
-                            ticksToMcTime(
-                                stop.scheduled
-                                .departure
-                            )
-                        }
-
-                    </td>
-
-                </tr>
-
-                `;
+            if (index < currentStopIndex) {
+                rowClass = "completed-stop";
+            } else if (index === currentStopIndex) {
+                rowClass = "current-train";
             }
-        );
 
-    }
+            const stName = getStationTagName(stop) || getStationTagName(stop.station) || "-";
+            const platform = stop.info?.platform || stop.platform || stop.station?.info?.platform || "-";
 
-    catch(error) {
+            const rawArrival = stop.scheduled?.arrival ?? stop.arrivalTime ?? stop.arrival;
+            const rawDeparture = stop.scheduled?.departure ?? stop.departureTime ?? stop.departure;
 
-        console.error(error);
+            const arrival = minecraftTimeToClock(rawArrival);
+            const departure = minecraftTimeToClock(rawDeparture);
 
-        trainName.innerHTML =
-            "🔴 Server Offline";
+            stopsTable.innerHTML += `
+                <tr class="${rowClass}">
+                    <td><strong>${stName}</strong></td>
+                    <td>${platform}</td>
+                    <td>${arrival}</td>
+                    <td>${departure}</td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Errore durante il caricamento del treno:", error);
+        trainName.innerHTML = "🔴 Impossibile caricare il treno";
+        if (serverStatus) {
+            serverStatus.innerHTML = `<span class="status-offline">🔴 SERVER OFFLINE</span>`;
+        }
     }
 }
 
-function parseColor(color) {
-
-    if (!color) {
-        return "#173252";
-    }
-
-    if (color.length === 9) {
-
-        return "#" + color.substring(3);
-
-    }
-
-    return color;
-}
-
+updateClock();
 loadTrain();
 
-setInterval(
-    loadTrain,
-    5000
-);
+setInterval(updateClock, 2000);
+setInterval(loadTrain, 5000);
