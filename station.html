@@ -2,112 +2,58 @@
 <html lang="it">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stazione</title>
-
-    <link rel="stylesheet"
-          href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="main-header">
-
     <img
         src="https://cdn.modrinth.com/data/I8nHY8ll/4232f6ec6bc0516f23e2828a61a78998c49b5f3d.png"
-        class="logo"
+        class="logo railcore-logo"
         alt="RailCore">
 
     <div class="header-text">
-
         <h1>ViaggiaTreno RailCore</h1>
-
-        <p>
-            Monitoraggio ferroviario in tempo reale
-        </p>
-
+        <p>Monitoraggio ferroviario in tempo reale</p>
     </div>
-
 </header>
 
 <nav class="navbar">
-
-    <a href="index.html">
-        🏠 Home
-    </a>
-
-    <a href="navigate.html">
-        🔍 Percorsi
-    </a>
-
+    <a href="index.html">🏠 Home</a>
+    <a href="navigate.html">🔍 Percorsi</a>
 </nav>
 
 <div class="status-bar">
-
-    <span id="serverStatus">
-
-        🟢 Server Online
-
-    </span>
-
-    <span id="mcTime">
-
-        🕒 Ora Minecraft: --:--
-
-    </span>
-
+    <span id="serverStatus">🟢 Server Online</span>
+    <span id="mcTime">🕒 Ora Minecraft: --:--</span>
 </div>
 
 <main class="container">
-
     <div class="card">
-
-        <h2 id="stationTitle">
-            Stazione
-        </h2>
-
+        <h2 id="stationTitle">Stazione</h2>
     </div>
 
-    <div class="card">
-
-        <table>
-
+    <div class="card station-board">
+        <table class="departure-board">
             <thead>
-
                 <tr>
-
-                    <th>Ora</th>
-                    <th>Treno</th>
                     <th>Categoria</th>
+                    <th>Treno</th>
                     <th>Destinazione</th>
-                    <th>Bin.</th>
-                    <th>Stato</th>
-
+                    <th>Arrivo</th>
+                    <th>Fermate successive</th>
+                    <th>Binario</th>
                 </tr>
-
             </thead>
-
-            <tbody id="board">
-
-            </tbody>
-
+            <tbody id="board"></tbody>
         </table>
-
     </div>
-
 </main>
 
-<script type="module"
-        src="station.js">
-
-</script>
-
+<script type="module" src="station.js"></script>
 </body>
-
 </html>
