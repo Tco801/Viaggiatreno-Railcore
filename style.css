@@ -1,359 +1,360 @@
+/* Reset Globale */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-
-    font-family: "Segoe UI", sans-serif;
-
-    background-color: #eef2f6;
-
-    color: #1f2937;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: #eef2f6;
+  color: #1f2937;
 }
 
+/* Header Principale */
 .main-header {
-
-    background: #0c2038;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-
-    padding: 20px;
+  background: #0c2038;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
 }
 
 .logo {
-
-    width: 80px;
-
-    height: 80px;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 .header-text h1 {
-
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 .header-text p {
-
-    opacity: .8;
+  opacity: 0.8;
 }
 
+/* Navigazione */
 .navbar {
-
-    background: #173252;
-
-    display: flex;
-
-    gap: 20px;
-
-    padding: 15px 20px;
+  background: #173252;
+  display: flex;
+  gap: 20px;
+  padding: 15px 20px;
 }
 
 .navbar a {
-
-    color: white;
-
-    text-decoration: none;
-
-    font-weight: 600;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .navbar a:hover {
-
-    color: #79c0ff;
+  color: #79c0ff;
 }
 
+/* Barra Stato Server */
 .status-bar {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    padding: 12px 20px;
-
-    background: white;
-
-    border-bottom: 1px solid #d7dce2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: white;
+  border-bottom: 1px solid #d7dce2;
 }
 
 .status-online {
-
-    color: green;
-
-    font-weight: bold;
+  color: #16a34a;
+  font-weight: bold;
 }
 
 .status-offline {
-
-    color: red;
-
-    font-weight: bold;
+  color: #dc2626;
+  font-weight: bold;
 }
 
+/* Layout Principale */
 .container {
-
-    max-width: 1200px;
-
-    margin: auto;
-
-    padding: 25px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
 }
 
 .card {
-
-    background: white;
-
-    border-radius: 12px;
-
-    padding: 20px;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-
-    margin-bottom: 20px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
 }
 
+/* Griglia Stazioni */
 .station-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill,minmax(250px,1fr));
-
-    gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
 }
 
 .station-card {
-
-    background: white;
-
-    border-radius: 10px;
-
-    padding: 18px;
-
-    text-decoration: none;
-
-    color: #173252;
-
-    font-weight: bold;
-
-    transition: .2s;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  text-decoration: none;
+  color: #173252;
+  font-weight: bold;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .station-card:hover {
-
-    transform: translateY(-2px);
-
-    background: #f5f9ff;
+  transform: translateY(-2px);
+  background: #f5f9ff;
 }
 
+/* Tabella Tabellone */
 table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-
-    background: white;
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 thead {
-
-    background: #173252;
-
-    color: white;
+  background: #173252;
+  color: white;
 }
 
 th,
 td {
-
-    padding: 12px;
-
-    border: 1px solid #e5e7eb;
-
-    text-align: left;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  text-align: left;
 }
 
 tr:hover {
-
-    background: #f8fafc;
+  background: #f8fafc;
 }
 
+/* Badge e Pill di Categoria */
 .badge {
-
-    padding: 5px 10px;
-
-    border-radius: 20px;
-
-    color: white;
-
-    font-size: .85rem;
+  padding: 5px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.85rem;
 }
 
-.train-info {
-
-    display: grid;
-
-    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-
-    gap: 15px;
+.category-pill,
+.category-box {
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.stop-list tr.current {
-
-    background: #fff7cc;
-}
-
-.stop-list tr.completed {
-
-    background: #e6ffea;
-}
-
-.stop-list tr.future {
-
-    background: white;
-}
-
-.category-pill {
-
-    color: white;
-
-    padding: 6px 12px;
-
-    border-radius: 20px;
-
-    font-size: .9rem;
-
-    font-weight: 700;
-
-    display: inline-block;
-
-    box-shadow:
-        0 2px 6px rgba(0,0,0,.15);
-}
-
+/* Stati del Treno */
 .status-running {
-
-    color: #008000;
-
-    font-weight: bold;
+  color: #16a34a;
+  font-weight: bold;
 }
 
 .status-waiting {
-
-    color: #d97706;
-
-    font-weight: bold;
+  color: #d97706;
+  font-weight: bold;
 }
 
 .status-station {
+  color: #0284c7;
+  font-weight: bold;
+}
 
-    color: #0a66c2;
+/* Stati delle Fermate (Percorso Treno) */
+.stop-list tr.current,
+.current-train {
+  background: #fff6bf;
+}
 
-    font-weight: bold;
+.stop-list tr.completed,
+.completed-stop {
+  background: #e8ffe8;
+}
+
+.stop-list tr.future,
+.future-stop {
+  background: white;
+}
+
+/* Info e Statistiche */
+.train-header {
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .info-box {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.current-train {
-
-    background: #fff6bf;
-}
-
-.completed-stop {
-
-    background: #e8ffe8;
-}
-
-.future-stop {
-
-    background: white;
-}
-
-.train-header {
-
-    font-size: 2rem;
-
-    font-weight: bold;
-}
-
-.category-box {
-
-    padding: 10px 15px;
-
-    border-radius: 20px;
-
-    color: white;
-
-    display: inline-block;
-
-    font-weight: bold;
-
-    box-shadow:
-        0 2px 8px rgba(0,0,0,.15);
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
 
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit,
-        minmax(220px,1fr));
-
-    gap: 15px;
-
-    margin-bottom: 20px;
+/* Layout Form */
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
 }
 
-.stat-card {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 2px 8px rgba(0,0,0,.08);
-
-    text-align: center;
+.input-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.stat-number {
-
-    font-size: 2rem;
-
+.input-group label {
+    font-size: 0.85rem;
     font-weight: bold;
-
-    color: #173252;
+    color: #555;
 }
 
+.input-group input {
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.btn-swap {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.btn-primary {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+/* Card e Risultati */
+.journey-card {
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+}
+
+.journey-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.leg-item {
+    border-left: 5px solid #2196f3;
+    padding-left: 12px;
+    margin-bottom: 15px;
+}
+
+.train-badge {
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.platform-badge {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+/* Timeline Fermate */
+.timeline {
+    list-style: none;
+    padding-left: 10px;
+    margin-top: 10px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 15px;
+    margin-bottom: 6px;
+}
+
+.timeline-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #0066cc;
+}
+
+.timeline-details {
+    margin-top: 10px;
+    cursor: pointer;
+    color: #444;
+}
+
+/* Spinner di caricamento */
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0066cc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.state-card {
+    text-align: center;
+    padding: 30px;
+}
+}
 .departures-grid {
 
     display: grid;
 
     grid-template-columns:
         repeat(auto-fit,
-        minmax(250px,1fr));
+        minmax(280px, 1fr));
 
     gap: 15px;
 }
@@ -385,5 +386,83 @@ tr:hover {
 
     color: #173252;
 
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+/* Stile aggiornato per i loghi delle categorie */
+.operator-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.operator-logo {
+    width: 36px;
+    height: 36px;
+    max-width: 48px;
+    max-height: 36px;
+    object-fit: contain;
+    display: inline-block;
+}
+
+.operator-logo-large {
+    width: 64px;
+    height: 64px;
+    max-width: 80px;
+    max-height: 64px;
+    object-fit: contain;
+    display: inline-block;
+}
+.railcore-logo {
+
+    border-radius: 18px;
+}
+
+.station-board {
+
+    padding: 0;
+
+    overflow: hidden;
+}
+
+.departure-board {
+
+    width: 100%;
+}
+
+.departure-board thead {
+
+    background:
+        linear-gradient(
+            90deg,
+            #173252,
+            #285287
+        );
+
+    color: white;
+}
+
+.departure-board tr:nth-child(even) {
+
+    background: #f8fbff;
+}
+
+.departure-board tr:hover {
+
+    background: #eaf4ff;
+}
+
+.station-operator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.stops-preview {
+
+    color: #555;
 }
