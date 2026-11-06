@@ -17,10 +17,29 @@ document.getElementById("stationTitle").textContent = stationName
 
 function minecraftTimeToClock(time) {
     if (time === undefined || time === null) return "--:--";
-    const totalMinutes = Math.floor(time * 0.06);
-    let hours = Math.floor(totalMinutes / 60) + 6;
+
+    // Se è già una stringa formattata "HH:MM"
+    if (typeof time === "string" && time.includes(":")) {
+        return time;
+    }
+
+    let numTime = Number(time);
+    if (isNaN(numTime)) return "--:--";
+
+    // Normalizza i tick negativi nel range di 24 ore (24000 tick per giorno in Minecraft)
+    if (numTime < 0) {
+        numTime = (numTime % 24000 + 24000) % 24000;
+    }
+
+    // Calcola i minuti totali trascorsi dalle 06:00
+    let totalMinutes = Math.floor(numTime * 0.06);
+    
+    // Normalizza i minuti nel formato delle 24 ore (1440 minuti in un giorno)
+    totalMinutes = (totalMinutes % 1440 + 1440) % 1440;
+
+    let hours = (Math.floor(totalMinutes / 60) + 6) % 24;
     const minutes = totalMinutes % 60;
-    hours = hours % 24;
+
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
@@ -121,6 +140,9 @@ async function loadBoard() {
             const currentStop = stops[stopIndex];
             const lastStop = stops[stops.length - 1];
 
+            // LOG DIAGNOSTICO: Ispezione della struttura degli orari per la fermata corrente
+            console.log("Fermata trovata per train", train.train_name, "-> Struttura fermata:", currentStop);
+
             const destName = getStationTagName(lastStop) || getStationTagName(lastStop.station) || "Destinazione Sconosciuta";
 
             const nextStops = stops
@@ -129,7 +151,17 @@ async function loadBoard() {
                 .filter(Boolean);
 
             const platform = extractPlatform(currentStop, train);
-            const arrivalTime = currentStop.departureTime ?? currentStop.arrivalTime ?? currentStop.time ?? 0;
+
+            // Ricerca flessibile su tutti i possibili percorsi dell'oggetto fermata
+            const rawTime = currentStop.scheduled?.departure 
+                ?? currentStop.scheduled?.arrival 
+                ?? currentStop.departure_time 
+                ?? currentStop.arrival_time
+                ?? currentStop.departureTime 
+                ?? currentStop.arrivalTime 
+                ?? currentStop.time 
+                ?? currentStop.departure
+                ?? currentStop.arrival;
 
             departures.push({
                 train,
@@ -137,11 +169,15 @@ async function loadBoard() {
                 destination: destName,
                 nextStops,
                 platform,
-                arrivalTime
+                arrivalTime: rawTime
             });
         }
 
-        departures.sort((a, b) => a.arrivalTime - b.arrivalTime);
+        departures.sort((a, b) => {
+            const timeA = typeof a.arrivalTime === 'number' ? a.arrivalTime : 0;
+            const timeB = typeof b.arrivalTime === 'number' ? b.arrivalTime : 0;
+            return timeA - timeB;
+        });
 
         if (departures.length === 0) {
             board.innerHTML = `
