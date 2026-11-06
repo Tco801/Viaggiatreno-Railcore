@@ -16,13 +16,31 @@ const serverStatus = document.getElementById("serverStatus");
 
 function minecraftTimeToClock(time) {
     if (time === undefined || time === null) return "--:--";
-    const totalMinutes = Math.floor(time * 0.06);
-    let hours = Math.floor(totalMinutes / 60) + 6;
+
+    // Se è già una stringa formattata "HH:MM"
+    if (typeof time === "string" && time.includes(":")) {
+        return time;
+    }
+
+    let numTime = Number(time);
+    if (isNaN(numTime)) return "--:--";
+
+    // Normalizza i tick negativi nel range di 24 ore (24000 tick per giorno in Minecraft)
+    if (numTime < 0) {
+        numTime = (numTime % 24000 + 24000) % 24000;
+    }
+
+    // Calcola i minuti totali trascorsi dalle 06:00
+    let totalMinutes = Math.floor(numTime * 0.06);
+    
+    // Normalizza i minuti nel formato delle 24 ore (1440 minuti in un giorno)
+    totalMinutes = (totalMinutes % 1440 + 1440) % 1440;
+
+    let hours = (Math.floor(totalMinutes / 60) + 6) % 24;
     const minutes = totalMinutes % 60;
-    hours = hours % 24;
+
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
-
 function translateLiveState(state) {
     if (!state) return "-";
     const stateClean = String(state).toLowerCase().trim();
