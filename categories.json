@@ -1,0 +1,22 @@
+{
+  "R": {
+    "name": "Regionale",
+    "logo": "regionale.png"
+  },
+  "RV": {
+    "name": "Regionale Veloce",
+    "logo": "regionale.png"
+  },
+  "RE": {
+    "name": "Regioexpress",
+    "logo": "regioexpress.png"
+  },
+  "IC": {
+    "name": "Intercity",
+    "logo": "intercity.png"
+  },
+  "FR": {
+    "name": "Frecciarossa",
+    "logo": "frecciarossa.png"
+  }
+}
